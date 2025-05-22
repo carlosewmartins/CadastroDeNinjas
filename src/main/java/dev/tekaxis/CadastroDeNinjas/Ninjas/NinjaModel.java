@@ -1,5 +1,6 @@
-package dev.tekaxis.CadastroDeNinjas;
+package dev.tekaxis.CadastroDeNinjas.Ninjas;
 
+import dev.tekaxis.CadastroDeNinjas.Missoes.MissaoModel;
 import jakarta.persistence.*;
 
 
@@ -16,6 +17,10 @@ public class NinjaModel {
     private String nome;
     private String email;
     private int idade;
+
+    // Uma missão por ninja (pode ter mais de um ninja na missão)
+    @ManyToOne
+    private MissaoModel missoes;
 
     public NinjaModel(){
     }
