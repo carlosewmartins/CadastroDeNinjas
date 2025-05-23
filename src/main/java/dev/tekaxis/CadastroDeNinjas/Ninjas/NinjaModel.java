@@ -1,6 +1,6 @@
 package dev.tekaxis.CadastroDeNinjas.Ninjas;
 
-import dev.tekaxis.CadastroDeNinjas.Missoes.MissaoModel;
+import dev.tekaxis.CadastroDeNinjas.Missoes.MissoesModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +30,6 @@ public class NinjaModel {
 
     // @ManyToOne - Uma missão por ninja (pode ter mais de um ninja na missão)
     @ManyToOne
-    private MissaoModel missoes;
+    private MissoesModel missoes;
 
 }
