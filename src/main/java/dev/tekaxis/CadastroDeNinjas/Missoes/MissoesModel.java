@@ -17,11 +17,13 @@ public class MissoesModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    @Column(name = "descricao")
     private String descricao;
+    @Column(name = "dificuldade")
     private char dificuldade;
     //Varios ninjas para uma unica missão
     @OneToMany(mappedBy = "missoes")
-    @JoinColumn(name = "missoes_id") // Foreign Key - Chave estrangeira
     private List<NinjaModel> ninja;
 }
