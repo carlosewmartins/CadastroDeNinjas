@@ -15,21 +15,19 @@ public class NinjaController {
         this.ninjaService = ninjaService;
     }
 
-    @GetMapping("/boasvindas")
-    public String boasVindas(){
-        return "Essa é minha primeira mensagem nessa rota!";
-    }
 
     // ------- CRUD -------
     // Adicionar Ninja (CREATE)
     @PostMapping("/criar")
-        public String criarNinja(){
-        return "Ninja criado";
+        public NinjaModel criarNinja(@RequestBody NinjaModel ninja){
+            return ninjaService.criarNinja(ninja);
     }
 
     // Exibir todos os Ninjas (READ)
     @GetMapping("/listar")
-    public List<NinjaModel> listarNinjas(){ return ninjaService.listarNinjas(); }
+    public List<NinjaModel> listarNinjas(){
+        return ninjaService.listarNinjas();
+    }
 
     // Exibir Ninja por ID (READ)
     @GetMapping("/listar/{id}")
