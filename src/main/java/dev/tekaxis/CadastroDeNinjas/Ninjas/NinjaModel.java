@@ -34,6 +34,9 @@ public class NinjaModel {
     @Column(name = "idade")
     private int idade;
 
+    @Column(name = "rank")
+    private String rank;
+
     // @ManyToOne - Uma missão por ninja (pode ter mais de um ninja na missão)
     @ManyToOne
     @JoinColumn(name = "missoes_id") // Foreign Key - Chave estrangeira
