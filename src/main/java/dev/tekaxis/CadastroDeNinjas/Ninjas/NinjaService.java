@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 @Service
 public class NinjaService {
 
-    private NinjaRepository ninjaRepository;
-    private NinjaMapper ninjaMapper;
+    private final NinjaRepository ninjaRepository;
+    private final NinjaMapper ninjaMapper;
 
     public NinjaService(NinjaRepository ninjaRepository, NinjaMapper ninjaMapper) {
         this.ninjaRepository = ninjaRepository;
@@ -27,7 +27,6 @@ public class NinjaService {
         return ninjaPorId.map(ninjaMapper::map).orElse(null);
     }
 
-    // Cadastrar novo Ninja
     public NinjaDTO criarNinja(NinjaDTO ninjaDTO){
         NinjaModel ninja = ninjaMapper.map(ninjaDTO);
         ninja = ninjaRepository.save(ninja);
