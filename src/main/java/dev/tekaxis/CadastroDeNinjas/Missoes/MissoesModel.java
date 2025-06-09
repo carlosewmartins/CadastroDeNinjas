@@ -8,13 +8,14 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "tb_missoes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
+@ToString
 public class MissoesModel {
 
     @Id
