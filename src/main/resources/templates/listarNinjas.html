@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Ninjas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2; /* Azul Corporativo */
+            --secondary-color: #50e3c2; /* Verde Menta (Destaque) */
+            --background-color: #f4f7f6;
+            --card-background-color: #ffffff;
+            --text-color: #333;
+            --header-text-color: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: var(--card-background-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            padding: 15px;
+            text-align: left;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: var(--header-text-color);
+            font-weight: 600;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e9f3ff;
+        }
+
+        .table img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .action-buttons .btn {
+            padding: 5px 10px;
+            font-size: 13px;
+            margin-right: 5px;
+        }
+
+        .btn-info { background-color: #5bc0de; }
+        .btn-warning { background-color: #f0ad4e; color: white; }
+        .btn-danger { background-color: #d9534f; }
+
+        /* --- CORREÇÃO DE ESTILOS DE DIFICULDADE --- */
+        .difficulty-tag {
+            display: inline-block;
+            padding: .3em .6em;
+            font-size: 85%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .25rem;
+            color: #fff;
+        }
+        .rank-a { background-color: #d9534f; } /* Vermelho - Mais Difícil */
+        .rank-b { background-color: #f0ad4e; } /* Laranja */
+        .rank-c { background-color: #ecb100; } /* Amarelo/Ouro */
+        .rank-d { background-color: #5bc0de; } /* Azul Claro */
+        .rank-e { background-color: #5cb85c; } /* Verde - Mais Fácil */
+        .rank-unknown { background-color: #777; }
+
+        .alert { padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: var(--border-radius); }
+        .alert-success { color: #3c763d; background-color: #dff0d8; border-color: #d6e9c6; }
+        .alert-danger { color: #a94442; background-color: #f2dede; border-color: #ebccd1; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Gerenciamento de Ninjas</h2>
+
+    <div th:if="${mensagemSucesso}" class="alert alert-success" th:text="${mensagemSucesso}"></div>
+    <div th:if="${mensagemErro}" class="alert alert-danger" th:text="${mensagemErro}"></div>
+
+    <div class="header-actions">
+        <a th:href="@{/ninjas/ui/novo}" class="btn btn-primary">Cadastrar Novo Ninja</a>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Imagem</th>
+            <th>Nome</th>
+            <th>Rank</th>
+            <th>Missão</th>
+            <th>Dificuldade</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="ninja : ${ninjas}">
+            <td><img th:src="${ninja.imgUrl ?: 'https://via.placeholder.com/45'}" alt="Imagem do Ninja"></td>
+            <td th:text="${ninja.nome}"></td>
+            <td th:text="${ninja.rank}"></td>
+            <td>
+                <span th:if="${ninja.missoes}" th:text="${ninja.missoes.descricao}">N/A</span>
+                <span th:unless="${ninja.missoes}">Nenhuma</span>
+            </td>
+            <td>
+                    <span th:if="${ninja.missoes}">
+                        <span class="difficulty-tag"
+                              th:classappend="${
+                                  #strings.toString(ninja.missoes.dificuldade) == 'A' ? 'rank-a' :
+                                  #strings.toString(ninja.missoes.dificuldade) == 'B' ? 'rank-b' :
+                                  #strings.toString(ninja.missoes.dificuldade) == 'C' ? 'rank-c' :
+                                  #strings.toString(ninja.missoes.dificuldade) == 'D' ? 'rank-d' :
+                                  #strings.toString(ninja.missoes.dificuldade) == 'E' ? 'rank-e' : 'rank-unknown'}"
+                              th:text="${'Rank ' + ninja.missoes.dificuldade}">
+                        </span>
+                    </span>
+                <span th:unless="${ninja.missoes}">-</span>
+            </td>
+            <td class="action-buttons">
+                <a th:href="@{|/ninjas/ui/detalhes/${ninja.id}|}" class="btn btn-info">Detalhes</a>
+                <a th:href="@{|/ninjas/ui/editar/${ninja.id}|}" class="btn btn-warning">Editar</a>
+                <form th:action="@{|/ninjas/ui/excluir/${ninja.id}|}" method="post" style="display:inline;" onsubmit="return confirm('Tem certeza?');">
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${ninjas.empty}">
+            <td colspan="6" style="text-align: center; padding: 20px;">Nenhum ninja cadastrado ainda.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

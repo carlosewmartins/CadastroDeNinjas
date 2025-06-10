@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:if="${ninja.id == null}">Cadastro de Ninja</title>
+    <title th:if="${ninja.id != null}">Editar Ninja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #777;
+            --background-color: #f4f7f6;
+            --card-background-color: #ffffff;
+            --text-color: #333;
+            --border-color: #ccc;
+            --focus-border-color: #4a90e2;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            background-color: var(--card-background-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--focus-border-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            text-decoration: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #357abd; transform: translateY(-2px); }
+        .btn-secondary { background-color: var(--secondary-color); }
+        .btn-secondary:hover { background-color: #555; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2 th:if="${ninja.id == null}">Cadastrar Novo Ninja</h2>
+    <h2 th:if="${ninja.id != null}">Editar Informações</h2>
+
+    <form th:action="${ninja.id == null} ? @{/ninjas/ui/criar} : @{|/ninjas/ui/atualizar/${ninja.id}|}" th:object="${ninja}" method="post">
+        <input type="hidden" th:if="${ninja.id != null}" th:field="*{id}" />
+
+        <div class="form-group">
+            <label for="nome">Nome:</label>
+            <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
+        </div>
+        <div class="form-group">
+            <label for="idade">Idade:</label>
+            <input type="number" class="form-control" id="idade" th:field="*{idade}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+        </div>
+        <div class="form-group">
+            <label for="rank">Rank:</label>
+            <input type="text" class="form-control" id="rank" th:field="*{rank}" required>
+        </div>
+        <div class="form-group">
+            <label for="imgUrl">URL da Imagem:</label>
+            <input type="url" class="form-control" id="imgUrl" th:field="*{imgUrl}">
+        </div>
+        <div class="form-group">
+            <label for="missoes">Missão Atribuída:</label>
+            <select class="form-control" id="missoes" th:field="*{missoes.id}">
+                <option value="">-- Nenhuma Missão --</option>
+                <option th:each="missao : ${missoesDisponiveis}"
+                        th:value="${missao.id}"
+                        th:text="${missao.descricao + ' (Dificuldade: ' + missao.dificuldade + ')'}"
+                        th:selected="${ninja.missoes != null and ninja.missoes.id == missao.id}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" th:text="${ninja.id == null} ? 'Criar Ninja' : 'Salvar Alterações'"></button>
+            <a th:href="@{/ninjas/ui/listar}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

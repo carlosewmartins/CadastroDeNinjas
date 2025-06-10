@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Ninja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --background-color: #f4f7f6;
+            --card-background-color: #ffffff;
+            --text-color: #333;
+            --label-color: #888;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .ninja-card {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card-background-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .ninja-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .ninja-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .ninja-rank {
+            font-size: 1.1em;
+            color: var(--label-color);
+            margin: 5px 0 25px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .info-item label {
+            font-weight: 600;
+            color: var(--label-color);
+            font-size: 0.8em;
+            display: block;
+        }
+
+        .info-item span {
+            font-size: 1em;
+        }
+
+        .mission-details {
+            grid-column: 1 / -1; /* Ocupa a largura toda */
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-warning { background-color: #f0ad4e; }
+        .btn-danger { background-color: #d9534f; }
+        .btn-secondary { background-color: #777; }
+
+        /* --- CORREÇÃO DE ESTILOS DE DIFICULDADE --- */
+        .difficulty-tag {
+            display: inline-block;
+            padding: .3em .6em;
+            font-size: 85%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .25rem;
+            color: #fff;
+            margin-top: 5px;
+        }
+        .rank-a { background-color: #d9534f; } /* Vermelho - Mais Difícil */
+        .rank-b { background-color: #f0ad4e; } /* Laranja */
+        .rank-c { background-color: #ecb100; } /* Amarelo/Ouro */
+        .rank-d { background-color: #5bc0de; } /* Azul Claro */
+        .rank-e { background-color: #5cb85c; } /* Verde - Mais Fácil */
+        .rank-unknown { background-color: #777; }
+    </style>
+</head>
+<body>
+<div th:if="${ninja}" class="ninja-card">
+    <img th:src="${ninja.imgUrl ?: 'https://via.placeholder.com/150'}" alt="Imagem do Ninja" class="ninja-avatar">
+    <h2 class="ninja-name" th:text="${ninja.nome}"></h2>
+    <p class="ninja-rank" th:text="${'Rank: ' + ninja.rank}"></p>
+
+    <div class="info-grid">
+        <div class="info-item">
+            <label>Idade</label>
+            <span th:text="${ninja.idade}"></span>
+        </div>
+        <div class="info-item">
+            <label>Email</label>
+            <span th:text="${ninja.email}"></span>
+        </div>
+        <div class="info-item mission-details">
+            <label>Missão Atual</label>
+            <div th:if="${ninja.missoes}">
+                <span th:text="${ninja.missoes.descricao}"></span><br>
+                <span class="difficulty-tag"
+                      th:classappend="${
+                          #strings.toString(ninja.missoes.dificuldade) == 'A' ? 'rank-a' :
+                          #strings.toString(ninja.missoes.dificuldade) == 'B' ? 'rank-b' :
+                          #strings.toString(ninja.missoes.dificuldade) == 'C' ? 'rank-c' :
+                          #strings.toString(ninja.missoes.dificuldade) == 'D' ? 'rank-d' :
+                          #strings.toString(ninja.missoes.dificuldade) == 'E' ? 'rank-e' : 'rank-unknown'}"
+                      th:text="${'Dificuldade: Rank ' + ninja.missoes.dificuldade}">
+                </span>
+            </div>
+            <div th:unless="${ninja.missoes}">
+                <span>Nenhuma missão atribuída.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <a th:href="@{|/ninjas/ui/editar/${ninja.id}|}" class="btn btn-warning">Editar</a>
+        <form th:action="@{|/ninjas/ui/excluir/${ninja.id}|}" method="post" style="display:inline;" onsubmit="return confirm('Tem certeza?');">
+            <button type="submit" class="btn btn-danger">Excluir</button>
+        </form>
+        <a th:href="@{/ninjas/ui/listar}" class="btn btn-secondary">Voltar</a>
+    </div>
+</div>
+
+<div th:unless="${ninja}">
+    <p>Ninja não encontrado.</p>
+</div>
+</body>
+</html>
